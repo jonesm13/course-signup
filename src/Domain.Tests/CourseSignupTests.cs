@@ -1,5 +1,7 @@
 namespace Domain.Tests
 {
+    using Aggregates.Course;
+    using Exceptions;
     using Xunit;
 
     public class CourseSignupTests
@@ -7,13 +9,25 @@ namespace Domain.Tests
         [Fact]
         public void WhenPlacesAvailable_CanSignUp()
         {
-            Assert.True(1==2);
+            // arrange
+            Course sut = new Course("Joe Bloggs", 30);
+
+            // act
+            sut.SignUp("Arthur Student");
+            
+            // assert
+            // (none required, success is absence of exception)
         }
 
         [Fact]
-        public void WhenCourseIsFull_CannotSignUp()
+        public void WhenNoPlacesAvailable_CannotSignUp()
         {
-            Assert.True(1==2);
+            Course sut = new Course("Joe Bloggs", 2);
+
+            sut.SignUp("Arthur Student");
+            sut.SignUp("Bill Pupil");
+
+            Assert.Throws<DomainException>(() => sut.SignUp("Jenny Delegate"));
         }
     }
 }
