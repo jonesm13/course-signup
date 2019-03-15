@@ -5,14 +5,14 @@ namespace Domain.Exceptions
 
     public class DomainException : Exception
     {
-        readonly HttpStatusCode httpStatus;
+        public HttpStatusCode StatusCode { get; }
 
         public DomainException(
             string message,
-            HttpStatusCode httpStatus = HttpStatusCode.BadRequest)
+            HttpStatusCode statusCode = HttpStatusCode.BadRequest)
             : base(message)
         {
-            this.httpStatus = httpStatus;
+            StatusCode = statusCode;
         }
     }
 }

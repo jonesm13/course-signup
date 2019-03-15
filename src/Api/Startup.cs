@@ -8,6 +8,7 @@
     using Microsoft.AspNetCore.Mvc.ViewComponents;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Middleware;
     using SimpleInjector;
     using SimpleInjector.Integration.AspNetCore.Mvc;
     using SimpleInjector.Lifestyles;
@@ -54,6 +55,8 @@
 
             container.Verify();
 
+            app.UseExceptionHandlingMiddleware();
+            
             if(env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
