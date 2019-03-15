@@ -2,12 +2,20 @@
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Controllers;
+    using Microsoft.AspNetCore.Mvc.ViewComponents;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    
+    using SimpleInjector;
+    using SimpleInjector.Integration.AspNetCore.Mvc;
+    using SimpleInjector.Lifestyles;
+
     public class Startup
     {
+        static readonly Container container = new Container();
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -20,10 +28,32 @@
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
+            IntegrateSimpleInjector(services);
         }
 
+        void IntegrateSimpleInjector(IServiceCollection services)
+        {
+            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddSingleton<IControllerActivator>(
+                new SimpleInjectorControllerActivator(container));
+            
+            services.AddSingleton<IViewComponentActivator>(
+                new SimpleInjectorViewComponentActivator(container));
+
+            services.EnableSimpleInjectorCrossWiring(container);
+            services.UseSimpleInjectorAspNetRequestScoping(container);
+        }
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            InitializeContainer(app);
+
+            container.Verify();
+
             if(env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -35,6 +65,14 @@
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        void InitializeContainer(IApplicationBuilder app)
+        {
+            container.RegisterMvcControllers(app);
+            container.RegisterMvcViewComponents(app);
+
+            container.AutoCrossWireAspNetComponents(app);
         }
     }
 }
