@@ -31,6 +31,7 @@
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Course Signup API", Version = "v1" });
+                c.SchemaRegistryOptions.SchemaIdSelector = type => type.FullName;
             });
             
             services

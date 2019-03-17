@@ -11,8 +11,7 @@ namespace Api.Middleware
     {
         readonly RequestDelegate next;
 
-        public ExceptionMiddleware(
-            RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             this.next = next ?? throw new ArgumentNullException(nameof(next));
         }
