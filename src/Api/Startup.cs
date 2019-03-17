@@ -15,7 +15,7 @@
 
     public class Startup
     {
-        static readonly Container container = new Container();
+        static readonly Container Container = new Container();
         
         public Startup(IConfiguration configuration)
         {
@@ -35,25 +35,25 @@
 
         void IntegrateSimpleInjector(IServiceCollection services)
         {
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IControllerActivator>(
-                new SimpleInjectorControllerActivator(container));
+                new SimpleInjectorControllerActivator(Container));
             
             services.AddSingleton<IViewComponentActivator>(
-                new SimpleInjectorViewComponentActivator(container));
+                new SimpleInjectorViewComponentActivator(Container));
 
-            services.EnableSimpleInjectorCrossWiring(container);
-            services.UseSimpleInjectorAspNetRequestScoping(container);
+            services.EnableSimpleInjectorCrossWiring(Container);
+            services.UseSimpleInjectorAspNetRequestScoping(Container);
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             InitializeContainer(app);
 
-            container.Verify();
+            Container.Verify();
 
             app.UseExceptionHandlingMiddleware();
             
@@ -72,10 +72,10 @@
 
         void InitializeContainer(IApplicationBuilder app)
         {
-            container.RegisterMvcControllers(app);
-            container.RegisterMvcViewComponents(app);
+            Container.RegisterMvcControllers(app);
+            Container.RegisterMvcViewComponents(app);
 
-            container.AutoCrossWireAspNetComponents(app);
+            Container.AutoCrossWireAspNetComponents(app);
         }
     }
 }
