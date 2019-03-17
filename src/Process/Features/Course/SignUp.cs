@@ -51,7 +51,13 @@
                     request.CourseId.ToString(),
                     course.ToState());
 
-                return CommandResult.Void;
+                return CommandResult.Void
+                    .WithNotification(new StudentSignedUp
+                    {
+                        Age = request.Age,
+                        CourseId = request.CourseId,
+                        StudentName = request.Name
+                    });
             }
         }
 

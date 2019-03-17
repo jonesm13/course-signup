@@ -8,6 +8,7 @@ namespace Api.IoC
     using MediatR.Pipeline;
     using Process;
     using Process.Adapters.InMemory;
+    using Process.Aspects.Notifications;
     using Process.Pipeline;
     using SimpleInjector;
     using SimpleInjector.Lifestyles;
@@ -43,7 +44,9 @@ namespace Api.IoC
             result.Register(typeof(IRequestHandler<,>), assemblies);
 
             // post-processors
-            result.Collection.Register(typeof(IRequestPostProcessor<,>), assemblies);
+            result.Collection.Register(
+                typeof(IRequestPostProcessor<,>),
+                new[] { typeof(NotificationsSender<,>) } );
 
             // document storage
             result.RegisterSingleton<IDocumentStore, InMemoryDocumentStore>();

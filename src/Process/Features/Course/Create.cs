@@ -13,7 +13,8 @@ namespace Process.Features.Course
         public class Command : IRequest<CommandResult>
         {
             public Guid Id { get; set; }
-            public string Lecturer { get; set; }
+            public string Name { get; set; }
+            public string LecturerName { get; set; }
             public int NumberOfPlaces { get; set; }
         }
 
@@ -31,15 +32,28 @@ namespace Process.Features.Course
                 CancellationToken cancellationToken)
             {
                 Course course = new Course(
-                    request.Lecturer,
+                    request.LecturerName,
                     request.NumberOfPlaces);
                 
                 await documentStore.StoreAsync(
                     request.Id.ToString(),
                     course.ToState());
 
-                return CommandResult.Void;
+                return CommandResult.Void
+                    .WithNotification(new CourseCreated
+                    {
+                        Name = request.Name,
+                        CourseId = request.Id,
+                        Places = request.NumberOfPlaces
+                    });
             }
+        }
+
+        public class CourseCreated : INotification
+        {
+            public Guid CourseId { get; set; }
+            public string Name { get; set; }
+            public int Places { get; set; }
         }
     }
 }
