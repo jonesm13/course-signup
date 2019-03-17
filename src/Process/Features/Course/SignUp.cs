@@ -17,7 +17,7 @@
         {
             public Guid CourseId { get; set; }
             public string Name { get; set; }
-            public DateTime DateOfBirth { get; set; }
+            public int Age { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, CommandResult>
@@ -45,7 +45,7 @@
 
                 Course course = Course.FromState(state);
 
-                course.SignUp(new Student(request.Name));
+                course.SignUp(new Student(request.Name, request.Age));
 
                 await documentStore.StoreAsync(
                     request.CourseId.ToString(),
@@ -53,6 +53,13 @@
 
                 return CommandResult.Void;
             }
+        }
+
+        public class StudentSignedUp : INotification
+        {
+            public Guid CourseId { get; set; }
+            public string StudentName { get; set; }
+            public int Age { get; set; }
         }
     }
 }

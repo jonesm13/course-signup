@@ -6,18 +6,14 @@ namespace Domain.ValueTypes
     {
         readonly string name;
 
-        public Student(string name)
+        public Student(string name, int age)
         {
             Ensure.IsNotNullOrEmpty(name, nameof(name));
+            Ensure.IsPositiveInteger(age, nameof(age));
 
             this.name = name;
         }
 
-        public static implicit operator Student(string value)
-        {
-            return new Student(value);
-        }
-        
         public override string ToString()
         {
             return name;

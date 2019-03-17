@@ -30,7 +30,17 @@ namespace Domain.Utilities
         {
             if(value == null)
             {
-                throw new ArgumentException(argumentName);
+                throw new ArgumentNullException(argumentName);
+            }
+        }
+
+        public static void IsPositiveInteger(int value, string argumentName)
+        {
+            if(value < 1)
+            {
+                throw new ArgumentException(
+                    $"'{argumentName}' must be a positive integer.",
+                    argumentName);
             }
         }
     }

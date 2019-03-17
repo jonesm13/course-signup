@@ -2,6 +2,7 @@ namespace Domain.Tests
 {
     using Aggregates.Course;
     using Exceptions;
+    using ValueTypes;
     using Xunit;
 
     public class CourseSignupTests
@@ -13,7 +14,7 @@ namespace Domain.Tests
             Course sut = new Course("Joe Bloggs", 30);
 
             // act
-            sut.SignUp("Arthur Student");
+            sut.SignUp(new Student("Arthur Student", 18));
             
             // assert
             // (none required, success is absence of exception)
@@ -24,10 +25,11 @@ namespace Domain.Tests
         {
             Course sut = new Course("Joe Bloggs", 2);
 
-            sut.SignUp("Arthur Student");
-            sut.SignUp("Bill Pupil");
+            sut.SignUp(new Student("Arthur Student", 18));
+            sut.SignUp(new Student("Bill Pupil", 19));
 
-            Assert.Throws<DomainException>(() => sut.SignUp("Jenny Delegate"));
+            Assert.Throws<DomainException>(
+                () => sut.SignUp(new Student("Jenny Delegate", 30)));
         }
     }
 }
