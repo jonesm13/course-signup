@@ -34,7 +34,7 @@ namespace Api.Middleware
 
                 await context.Response.WriteAsync(exception.Message);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
                 if (context.Response.HasStarted)
                 {

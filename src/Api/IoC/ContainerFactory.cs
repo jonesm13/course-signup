@@ -48,6 +48,11 @@ namespace Api.IoC
                 typeof(IRequestPostProcessor<,>),
                 new[] { typeof(NotificationsSender<,>) } );
 
+            // notification handlers
+            result.Collection.Register(
+                typeof(INotificationHandler<>),
+                assemblies);
+            
             // document storage
             result.RegisterSingleton<IDocumentStore, InMemoryDocumentStore>();
 
