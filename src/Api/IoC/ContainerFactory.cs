@@ -8,6 +8,7 @@ namespace Api.IoC
     using MediatR.Pipeline;
     using Process;
     using Process.Adapters.InMemory;
+    using Process.Adapters.Nop;
     using Process.Aspects.Notifications;
     using Process.Pipeline;
     using SimpleInjector;
@@ -56,6 +57,9 @@ namespace Api.IoC
             // document storage
             result.RegisterSingleton<IDocumentStore, InMemoryDocumentStore>();
 
+            // message bus
+            result.Register<IMessageBus, NopMessageBus>();
+            
             return result;
         }
 
