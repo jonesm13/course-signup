@@ -7,34 +7,48 @@ namespace Domain.Aggregates.Course
 
     public class Course
     {
-        readonly Lecturer lecturer;
-        readonly NumberOfPlaces places;
+        State state;
 
-        NumberOfPlaces availablePlaces;
+        Course()
+        {
+            state = new State();
+        }
 
         public Course(Lecturer lecturer, NumberOfPlaces places)
         {
             Ensure.IsNotNull(lecturer, nameof(lecturer));
             Ensure.IsNotNull(places, nameof(places));
-            
-            this.lecturer = lecturer;
-            this.places = places;
 
-            availablePlaces = places;
+            state = new State
+            {
+                Lecturer = lecturer,
+                Places = places,
+                AvailablePlaces = places
+            };
         }
 
         public void SignUp(Student student)
         {
             Ensure.IsNotNull(student, nameof(student));
 
-            if(availablePlaces.None)
+            if(state.AvailablePlaces == 0)
             {
                 throw new DomainException(
                     "This course has no available places.",
                     HttpStatusCode.Conflict);
             }
 
-            availablePlaces = availablePlaces.Decrease();
+            state.AvailablePlaces--;
+        }
+
+        public static Course FromState(State state)
+        {
+            return new Course { state = state };
+        }
+
+        public State ToState()
+        {
+            return state;
         }
     }
 }

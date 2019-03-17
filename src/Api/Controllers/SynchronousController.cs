@@ -1,5 +1,6 @@
 namespace Api.Controllers
 {
+    using System.Net;
     using System.Threading.Tasks;
     using MediatR;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,9 @@ namespace Api.Controllers
         }
 
         [HttpPost("{id}/students")]
+        [ProducesResponseType(typeof(HttpStatusCode), (int)HttpStatusCode.Conflict)]
+        [ProducesResponseType(typeof(HttpStatusCode), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(HttpStatusCode), (int)HttpStatusCode.NoContent)]
         public async Task<ActionResult> SignUp(
             [FromBody] SignUp.Command command)
         {

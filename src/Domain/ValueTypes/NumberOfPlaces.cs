@@ -18,6 +18,11 @@ namespace Domain.ValueTypes
             return new NumberOfPlaces(value);
         }
 
+        public static implicit operator int(NumberOfPlaces value)
+        {
+            return value.value;
+        }
+        
         public bool None => value == 0;
 
         public NumberOfPlaces Decrease()

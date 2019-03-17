@@ -1,6 +1,13 @@
 ﻿namespace Process.Features.Course
 {
     using System;
+    using System.Net;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Domain.Aggregates.Course;
+    using Domain.Exceptions;
+    using Domain.Ports;
+    using Domain.ValueTypes;
     using MediatR;
     using Pipeline;
 
@@ -11,6 +18,41 @@
             public Guid CourseId { get; set; }
             public string Name { get; set; }
             public DateTime DateOfBirth { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Command, CommandResult>
+        {
+            readonly IDocumentStore documentStore;
+
+            public Handler(IDocumentStore documentStore)
+            {
+                this.documentStore = documentStore;
+            }
+
+            public async Task<CommandResult> Handle(
+                Command request,
+                CancellationToken cancellationToken)
+            {
+                State state = await documentStore.GetAsync<State>(
+                    request.CourseId.ToString());
+
+                if(state == default(State))
+                {
+                    throw new DomainException(
+                        "Course not found.",
+                        HttpStatusCode.NotFound);
+                }
+
+                Course course = Course.FromState(state);
+
+                course.SignUp(new Student(request.Name));
+
+                await documentStore.StoreAsync(
+                    request.CourseId.ToString(),
+                    course.ToState());
+
+                return CommandResult.Void;
+            }
         }
     }
 }

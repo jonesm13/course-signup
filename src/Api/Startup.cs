@@ -1,5 +1,6 @@
 ﻿namespace Api
 {
+    using IoC;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -8,14 +9,15 @@
     using Microsoft.AspNetCore.Mvc.ViewComponents;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
     using Middleware;
     using SimpleInjector;
     using SimpleInjector.Integration.AspNetCore.Mvc;
-    using SimpleInjector.Lifestyles;
+    using Swashbuckle.AspNetCore.Swagger;
 
     public class Startup
     {
-        static readonly Container Container = new Container();
+        public static Container Container; 
         
         public Startup(IConfiguration configuration)
         {
@@ -26,6 +28,11 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Course Signup API", Version = "v1" });
+            });
+            
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -35,13 +42,13 @@
 
         void IntegrateSimpleInjector(IServiceCollection services)
         {
-            Container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
+            Container = ContainerFactory.Build();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IControllerActivator>(
                 new SimpleInjectorControllerActivator(Container));
-            
+
             services.AddSingleton<IViewComponentActivator>(
                 new SimpleInjectorViewComponentActivator(Container));
 
@@ -49,22 +56,32 @@
             services.UseSimpleInjectorAspNetRequestScoping(Container);
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory)
         {
             InitializeContainer(app);
+
+            Container.CrossWire<ILoggerFactory>(app);
+            Container.RegisterConditional(
+                typeof(ILogger),
+                c => typeof(Logger<>).MakeGenericType(c.Consumer.ImplementationType),
+                Lifestyle.Singleton,
+                c => true);
 
             Container.Verify();
 
             app.UseExceptionHandlingMiddleware();
-            
-            if(env.IsDevelopment())
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Course Signup Api v1");
+            });
+
+            loggerFactory.AddLog4Net();
 
             app.UseHttpsRedirection();
             app.UseMvc();

@@ -1,0 +1,11 @@
+namespace Domain.Ports
+{
+    using System.Threading.Tasks;
+
+    public interface IDocumentStore
+    {
+        Task StoreAsync<TDocument>(string key, TDocument toStore);
+
+        Task<TDocument> GetAsync<TDocument>(string key);
+    }
+}
