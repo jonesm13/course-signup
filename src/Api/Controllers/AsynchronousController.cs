@@ -6,7 +6,7 @@ namespace Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Process.Features.Course;
 
-    [Route("api/asynchronous/courses")]
+    [Route("api/async/courses")]
     [ApiController]
     public class AsynchronousController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace Api.Controllers
             this.mediator = mediator;
         }
 
-        [HttpPost, Route("{id}")]
+        [HttpPost, Route("{id}/students")]
         [ProducesResponseType(typeof(HttpStatusCode), (int) HttpStatusCode.Accepted)]
         public async Task<ActionResult> CreateAsync(
             [FromBody] RequestSignUp.Command request)
