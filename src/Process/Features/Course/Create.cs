@@ -1,8 +1,10 @@
 namespace Process.Features.Course
 {
     using System;
+    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Aspects.Validation;
     using Domain.Aggregates.Course;
     using Domain.Ports;
     using FluentValidation;
@@ -21,8 +23,16 @@ namespace Process.Features.Course
 
         public class Validator : AbstractValidator<Command>
         {
-            public Validator()
+            readonly IDocumentStore store;
+
+            public Validator(IDocumentStore store)
             {
+                this.store = store;
+
+                RuleFor(x => x.Id)
+                    .MustAsync(NotAlreadyExist)
+                    .WithHttpStatusCode(HttpStatusCode.Conflict);
+
                 RuleFor(x => x.Name)
                     .NotEmpty();
 
@@ -31,6 +41,13 @@ namespace Process.Features.Course
 
                 RuleFor(x => x.NumberOfPlaces)
                     .Must(BeAPositiveInteger);
+            }
+
+            Task<bool> NotAlreadyExist(
+                Guid arg,
+                CancellationToken cancellationToken)
+            {
+                return store.ExistsAsync(arg.ToString());
             }
 
             bool BeAPositiveInteger(int arg)

@@ -8,6 +8,7 @@
     using Domain.Exceptions;
     using Domain.Ports;
     using Domain.ValueTypes;
+    using FluentValidation;
     using MediatR;
     using Pipeline;
 
@@ -18,6 +19,35 @@
             public Guid CourseId { get; set; }
             public string Name { get; set; }
             public int Age { get; set; }
+        }
+
+        public class Validator : AbstractValidator<Command>
+        {
+            readonly IDocumentStore documentStore;
+
+            public Validator(IDocumentStore documentStore)
+            {
+                this.documentStore = documentStore;
+                
+                RuleFor(x => x.CourseId)
+                    .MustAsync(Exist);
+
+                RuleFor(x => x.Name)
+                    .NotEmpty();
+
+                RuleFor(x => x.Age)
+                    .Must(BePositiveInteger);
+            }
+
+            bool BePositiveInteger(int arg)
+            {
+                return arg > 0;
+            }
+
+            Task<bool> Exist(Guid arg, CancellationToken cancellationToken)
+            {
+                return documentStore.ExistsAsync(arg.ToString());
+            }
         }
 
         public class Handler : IRequestHandler<Command, CommandResult>

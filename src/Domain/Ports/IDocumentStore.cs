@@ -7,5 +7,7 @@ namespace Domain.Ports
         Task StoreAsync<TDocument>(string key, TDocument toStore);
 
         Task<TDocument> GetAsync<TDocument>(string key);
+
+        Task<bool> ExistsAsync(string key);
     }
 }

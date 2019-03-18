@@ -1,12 +1,14 @@
 namespace Api.Middleware
 {
     using System;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Domain.Exceptions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Process.Aspects.Notifications;
+    using Process.Aspects.Validation;
 
     public class ExceptionMiddleware
     {
@@ -42,8 +44,10 @@ namespace Api.Middleware
                     throw;
                 }
 
+                HttpStatusCode mostCommonCode = exception.GetMostCommonError();
+                
                 context.Response.Clear();
-                context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                context.Response.StatusCode = (int)mostCommonCode;
 
                 await context.Response.WriteAsync(exception.Message);
             }

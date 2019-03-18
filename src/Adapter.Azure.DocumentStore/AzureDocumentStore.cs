@@ -16,5 +16,11 @@
             // TODO read from blob store, deserialize to the target type
             throw new System.NotImplementedException();
         }
+
+        public Task<bool> ExistsAsync(string key)
+        {
+            // TODO see if we have a blob with this key
+            throw new System.NotImplementedException();
+        }
     }
 }

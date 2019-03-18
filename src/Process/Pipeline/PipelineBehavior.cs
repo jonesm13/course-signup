@@ -6,6 +6,7 @@ namespace Process.Pipeline
     using System.Threading;
     using System.Threading.Tasks;
     using Aspects.Notifications;
+    using Aspects.Validation;
     using FluentValidation;
     using FluentValidation.Results;
     using MediatR;

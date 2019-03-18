@@ -40,5 +40,10 @@ namespace Process.Adapters.InMemory
 
             return Task.FromResult(result);
         }
+
+        public Task<bool> ExistsAsync(string key)
+        {
+            return Task.FromResult(innerDict.ContainsKey(key));
+        }
     }
 }

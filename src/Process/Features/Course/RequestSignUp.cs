@@ -4,6 +4,7 @@ namespace Process.Features.Course
     using System.Threading;
     using System.Threading.Tasks;
     using Domain.Ports;
+    using FluentValidation;
     using MediatR;
     using Pipeline;
 
@@ -14,6 +15,23 @@ namespace Process.Features.Course
             public Guid CourseId { get; set; }
             public string Name { get; set; }
             public int Age { get; set; }
+        }
+
+        public class Validator : AbstractValidator<Command>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.Name)
+                    .NotEmpty();
+
+                RuleFor(x => x.Age)
+                    .Must(BeAPositiveInteger);
+            }
+
+            bool BeAPositiveInteger(int arg)
+            {
+                return arg > 0;
+            }
         }
 
         public class Handler : IRequestHandler<Command, CommandResult>
