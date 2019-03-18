@@ -6,6 +6,7 @@ namespace Api.Middleware
     using Domain.Exceptions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Process.Aspects.Notifications;
 
     public class ExceptionMiddleware
     {
@@ -22,29 +23,43 @@ namespace Api.Middleware
             {
                 await next(context);
             }
-            catch (DomainException exception)
+            catch(DomainException exception)
             {
-                if (context.Response.HasStarted)
+                if(context.Response.HasStarted)
                 {
                     throw;
                 }
 
                 context.Response.Clear();
-                context.Response.StatusCode = (int)exception.StatusCode;
+                context.Response.StatusCode = (int) exception.StatusCode;
 
                 await context.Response.WriteAsync(exception.Message);
             }
-            catch (Exception exception)
+            catch(PipelineValidationException exception)
             {
-                if (context.Response.HasStarted)
+                if(context.Response.HasStarted)
                 {
                     throw;
                 }
 
                 context.Response.Clear();
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
 
-                await context.Response.WriteAsync("An internal server error occurred.");
+                await context.Response.WriteAsync(exception.Message);
+            }
+            catch(Exception exception)
+            {
+                if(context.Response.HasStarted)
+                {
+                    throw;
+                }
+
+                context.Response.Clear();
+                context.Response.StatusCode =
+                    (int) HttpStatusCode.InternalServerError;
+
+                await context.Response.WriteAsync(
+                    "An internal server error occurred.");
             }
         }
     }

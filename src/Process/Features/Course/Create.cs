@@ -5,6 +5,7 @@ namespace Process.Features.Course
     using System.Threading.Tasks;
     using Domain.Aggregates.Course;
     using Domain.Ports;
+    using FluentValidation;
     using MediatR;
     using Pipeline;
 
@@ -16,6 +17,26 @@ namespace Process.Features.Course
             public string Name { get; set; }
             public string LecturerName { get; set; }
             public int NumberOfPlaces { get; set; }
+        }
+
+        public class Validator : AbstractValidator<Command>
+        {
+            public Validator()
+            {
+                RuleFor(x => x.Name)
+                    .NotEmpty();
+
+                RuleFor(x => x.LecturerName)
+                    .NotEmpty();
+
+                RuleFor(x => x.NumberOfPlaces)
+                    .Must(BeAPositiveInteger);
+            }
+
+            bool BeAPositiveInteger(int arg)
+            {
+                return arg > 0;
+            }
         }
 
         public class Handler : IRequestHandler<Command, CommandResult>

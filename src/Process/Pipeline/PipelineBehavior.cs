@@ -1,8 +1,13 @@
 namespace Process.Pipeline
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Aspects.Notifications;
+    using FluentValidation;
+    using FluentValidation.Results;
     using MediatR;
     using Microsoft.Extensions.Logging;
 
@@ -10,10 +15,14 @@ namespace Process.Pipeline
         : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
+        readonly IEnumerable<IValidator<TRequest>> validators;
         readonly ILogger logger;
 
-        public PipelineBehavior(ILogger logger)
+        public PipelineBehavior(
+            IEnumerable<IValidator<TRequest>> validators,
+            ILogger logger)
         {
+            this.validators = validators;
             this.logger = logger;
         }
 
@@ -22,6 +31,17 @@ namespace Process.Pipeline
             CancellationToken cancellationToken,
             RequestHandlerDelegate<TResponse> next)
         {
+            ValidationContext context = new ValidationContext(request);
+            IEnumerable<ValidationFailure> failures = validators
+                .Select(x => x.Validate(context))
+                .SelectMany(x => x.Errors)
+                .ToList();
+
+            if(failures.Any())
+            {
+                throw new PipelineValidationException(failures);
+            }
+
             try
             {
                 TResponse result = await next();

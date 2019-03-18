@@ -4,6 +4,7 @@ namespace Api.IoC
     using System.Linq;
     using System.Reflection;
     using Domain.Ports;
+    using FluentValidation;
     using MediatR;
     using MediatR.Pipeline;
     using Process;
@@ -48,6 +49,9 @@ namespace Api.IoC
             result.Collection.Register(
                 typeof(IRequestPostProcessor<,>),
                 new[] { typeof(NotificationsSender<,>) } );
+
+            // validators
+            result.Collection.Register(typeof(IValidator<>), assemblies);
 
             // notification handlers
             result.Collection.Register(
