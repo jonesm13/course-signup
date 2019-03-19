@@ -1,13 +1,11 @@
 namespace Api.Middleware
 {
     using System;
-    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Domain.Exceptions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Process.Aspects.Notifications;
     using Process.Aspects.Validation;
 
     public class ExceptionMiddleware

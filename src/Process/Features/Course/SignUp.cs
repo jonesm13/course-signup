@@ -4,8 +4,8 @@
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Aspects.Validation;
     using Domain.Aggregates.Course;
-    using Domain.Exceptions;
     using Domain.Ports;
     using Domain.ValueTypes;
     using FluentValidation;
@@ -28,9 +28,10 @@
             public Validator(IDocumentStore documentStore)
             {
                 this.documentStore = documentStore;
-                
+
                 RuleFor(x => x.CourseId)
-                    .MustAsync(Exist);
+                    .MustAsync(Exist)
+                    .WithHttpStatusCode(HttpStatusCode.NotFound);
 
                 RuleFor(x => x.Name)
                     .NotEmpty();
@@ -65,13 +66,6 @@
             {
                 State state = await documentStore.GetAsync<State>(
                     request.CourseId.ToString());
-
-                if(state == default(State))
-                {
-                    throw new DomainException(
-                        "Course not found.",
-                        HttpStatusCode.NotFound);
-                }
 
                 Course course = Course.FromState(state);
 
