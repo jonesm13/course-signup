@@ -43,11 +43,12 @@ namespace Process.Features.Course
                     .Must(BeAPositiveInteger);
             }
 
-            Task<bool> NotAlreadyExist(
+            async Task<bool> NotAlreadyExist(
                 Guid arg,
                 CancellationToken cancellationToken)
             {
-                return store.ExistsAsync(arg.ToString());
+                bool result = await store.ExistsAsync(arg.ToString());
+                return !result;
             }
 
             bool BeAPositiveInteger(int arg)

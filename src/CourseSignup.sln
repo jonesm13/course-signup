@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Process", "Process\Process.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adapter.Azure.DocumentStore", "Adapter.Azure.DocumentStore\Adapter.Azure.DocumentStore.csproj", "{BCCDE85F-0E6B-4007-B70F-EF85CF49D2EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Process.Tests", "Process.Tests\Process.Tests.csproj", "{5EBD11D3-A6FF-4518-8BD1-B19BBAD6E06B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{BCCDE85F-0E6B-4007-B70F-EF85CF49D2EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCCDE85F-0E6B-4007-B70F-EF85CF49D2EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCCDE85F-0E6B-4007-B70F-EF85CF49D2EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EBD11D3-A6FF-4518-8BD1-B19BBAD6E06B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EBD11D3-A6FF-4518-8BD1-B19BBAD6E06B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EBD11D3-A6FF-4518-8BD1-B19BBAD6E06B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EBD11D3-A6FF-4518-8BD1-B19BBAD6E06B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
